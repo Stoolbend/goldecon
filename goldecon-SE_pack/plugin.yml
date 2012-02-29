@@ -1,0 +1,32 @@
+name: goldeconplus
+main: net.Stoolbend.goldeconplus.Goldecon
+version: 1.5+
+authors: [Stoolbend]
+description: An extension to goldecon by boardinggamer & Kierrow. A simple economy using gold nuggets.
+permissions:
+ goldecon.shop.create:
+  description: create shops
+  default: op
+ goldecon.core.use:
+  description: use goldecon
+  default: op
+ goldecon.bank.use:
+  description: use goldecon
+  default: op
+commands:
+ gebank:
+  description:
+  usage: <command>
+  aliases: [goldeconbank]
+ ge:
+  description:
+  usage: <command>
+  aliases: [goldecon]
+ geshophelp:
+  description: help menu for shops
+  usage: <command>
+  aliases: [goldeconshophelp, geshelp]
+ geshop:
+  description:
+  usage: <command>
+  aliases: [goldeconshop, ges]
