@@ -2,7 +2,7 @@
 
 ## A little intro
 goldecon+ (plus) is a version of boardinggamer's & Kierrow's "goldecon" plugin with
-some slight modifications & improvements by Stoolbend <stoolbend@mc-server.co.uk>
+some slight modifications & improvements by Stoolbend <stoolbend@mc-server.co.uk>.
 The PLUS version of goldecon contains a load of extra features (previously released
 as individual plugin files) which are listed below, but if you just want the basic
 goldecon core including the bank functions, then check the lite branch in the top
