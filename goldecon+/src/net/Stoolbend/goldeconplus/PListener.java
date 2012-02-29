@@ -34,7 +34,7 @@ public class PListener implements Listener
       this.bank2.set(e.getPlayer().getName(), Integer.valueOf(0));
     }
 
-    e.getPlayer().sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GOLD +  "This server uses goldecon-SE as the economy!");
+    e.getPlayer().sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GOLD +  "This server uses goldecon+ as the economy!");
   }
   
   @EventHandler

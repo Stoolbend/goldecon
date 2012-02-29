@@ -8,5 +8,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="E:/bukkit/Permissions.jar"/>
+	<classpathentry kind="lib" path="E:/bukkit/PEX/Permissions.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
