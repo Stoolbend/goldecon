@@ -1,4 +1,4 @@
-package net.Stoolbend.goldeconplus;
+package org.goldecon.goldeconplus;
 
 import java.util.Random;
 import org.bukkit.Material;

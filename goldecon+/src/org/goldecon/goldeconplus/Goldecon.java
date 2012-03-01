@@ -1,12 +1,10 @@
-package net.Stoolbend.goldeconplus;
+package org.goldecon.goldeconplus;
 
 import java.util.logging.Logger;
 import net.kierrow.io.Save;
 import net.kierrow.io.SaveManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.goldecon.shops.GoldeconShop;
+import org.goldecon.shops.GoldeconShopListener;
 
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -24,8 +24,8 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 
 public final class Goldecon extends JavaPlugin
 {
-  Logger log;
-  PluginDescriptionFile info;
+  public static Logger log;
+  static PluginDescriptionFile info;
   static Save<Integer> banks;
   public static int creeper = 32;
   public static int zombie = 32;
@@ -50,8 +50,8 @@ public final class Goldecon extends JavaPlugin
   public static int wolf = 32;
   FileConfiguration config;
   // Declare perm system variables
-  PermissionHandler perms3;
-  PermissionManager permsEx;
+  public static PermissionHandler perms3;
+  public static PermissionManager permsEx;
   public static int permSystem;
   // Display text thats editable
   public static String ver = "1.5a";
@@ -59,13 +59,13 @@ public final class Goldecon extends JavaPlugin
 
   public void onEnable()
   {
-    this.log = Logger.getLogger("Minecraft");
-    this.info = getDescription();
+    Goldecon.log = Logger.getLogger("Minecraft");
+    Goldecon.info = getDescription();
 
     banks = SaveManager.load(this, "banks");
 
     getServer().getPluginManager().registerEvents(new EListener(this), this);
-    getServer().getPluginManager().registerEvents(new BListener(this), this);
+    getServer().getPluginManager().registerEvents(new GoldeconShopListener(this), this);
     getServer().getPluginManager().registerEvents(new PListener(this), this);
 
     creeper = cfgGetInt("Bad Mobs.Creeper", 5);
@@ -95,14 +95,14 @@ public final class Goldecon extends JavaPlugin
     saveConfig();
     permSystem = setupPermissions();
     
-    this.log.info(this.info.getName() + " has been enabled");
+    Goldecon.log.info(Goldecon.info.getName() + " has been enabled");
   }
 
   public void onDisable()
   {
     SaveManager.save(this, banks);
 
-    this.log.info(this.info.getName() + " has been disabled");
+    Goldecon.log.info(Goldecon.info.getName() + " has been disabled");
   }
   
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
@@ -252,101 +252,15 @@ public final class Goldecon extends JavaPlugin
           player.sendMessage(edition + ChatColor.RED + "/gebank < money | deposit <amount> | withdraw <amount> >");
         }
       }
-      else if (cmd.getName().equalsIgnoreCase("geshophelp")) {
-        if (((sender instanceof Player)) && 
-          (args.length == 0)) {
-          Player plr = (Player)sender;
-        	if(!checkPerm(plr, "goldecon.shop.create")){
-        		plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
-        		return true;
-        	}
-          plr.sendMessage(ChatColor.GREEN + "<- goldecon+ | Shop Commands ->");
-          plr.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
-          plr.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");
-          plr.sendMessage(ChatColor.AQUA + "COMMANDS:");
-          plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshophelp");
-          plr.sendMessage(ChatColor.GOLD + "- Opens this");
-          plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshop " + ChatColor.DARK_PURPLE + "<item name> <amount> <buy price> <sell price>");
-          plr.sendMessage(ChatColor.GOLD + "- creates a shop");
-          plr.sendMessage(ChatColor.AQUA + "HOW TO USE:");
-          plr.sendMessage(ChatColor.LIGHT_PURPLE + "To Buy:");
-          plr.sendMessage(ChatColor.GOLD + "- Right click on the sign");
-          plr.sendMessage(ChatColor.LIGHT_PURPLE + "To Sell:");
-          plr.sendMessage(ChatColor.GOLD + "- Left click on the sign");
-          return true;
-        }
+      
+      // GoldeconShop command method is activated here after the core stuff
+      GoldeconShop geShop = new GoldeconShop();
+      boolean shopCmd = geShop.shopCommand(sender, cmd, player, args);
+      if(shopCmd == false){
+          player.sendMessage(edition + ChatColor.RED + "There was an error running the /geshop command.");
+          player.sendMessage(edition + ChatColor.RED + "Please check the server log...");
+    	  return false;
       }
-    else if ((cmd.getName().equalsIgnoreCase("geshop")) && (args.length < 4)){
-    	if (((sender instanceof Player)) && 
-    	          (args.length == 0)) {
-    	          Player plr = (Player)sender;
-    	        	if(!checkPerm(plr, "goldecon.shop.create")){
-    	        		plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
-    	        		return true;
-    	        	}
-    	            plr.sendMessage(ChatColor.GREEN + "<- goldecon+ | Shop Commands ->");
-    	            plr.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
-    	            plr.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");
-    	          plr.sendMessage(ChatColor.AQUA + "COMMANDS:");
-    	          plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshophelp");
-    	          plr.sendMessage(ChatColor.GOLD + "- Opens this");
-    	          plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshop " + ChatColor.DARK_PURPLE + "<item name> <amount> <buy price> <sell price>");
-    	          plr.sendMessage(ChatColor.GOLD + "- creates a shop");
-    	          plr.sendMessage(ChatColor.AQUA + "HOW TO USE:");
-    	          plr.sendMessage(ChatColor.LIGHT_PURPLE + "To Buy:");
-    	          plr.sendMessage(ChatColor.GOLD + "- Right click on the sign");
-    	          plr.sendMessage(ChatColor.LIGHT_PURPLE + "To Sell:");
-    	          plr.sendMessage(ChatColor.GOLD + "- Left click on the sign");
-    	          return true;
-    	        }
-    }
-      else if ((cmd.getName().equalsIgnoreCase("geshop")) && 
-        ((sender instanceof Player)) && 
-        (args.length == 4)) {
-        Player plr = (Player)sender;
-    	if(!checkPerm(plr, "goldecon.shop.create")){
-    		plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
-    		return true;
-    	}
-            Block block = plr.getTargetBlock(null, 5);
-            String itemname = args[0].toUpperCase();
-            String amount = args[1];
-            String bprice = args[2];
-            String sprice = args[3];
-
-            if ((block.getTypeId() == 63) || (block.getTypeId() == 68)) {
-              Sign s = (Sign)block.getState();
-              String line0 = s.getLine(0);
-              String line1 = s.getLine(1);
-              String line2 = s.getLine(2);
-              String line3 = s.getLine(3);
-
-              if (block.getLocation().add(0.0D, -1.0D, 0.0D).getBlock().getType() == Material.CHEST) {
-                if ((line0.equalsIgnoreCase("")) && (line1.equalsIgnoreCase("")) && (line2.equalsIgnoreCase("")) && (line3.equalsIgnoreCase(""))) {
-                  s.setLine(0, "[shop]");
-                  s.setLine(1, plr.getDisplayName());
-                  if (itemname.equals("1"))
-                    s.setLine(2, "STONE");
-                  else if (itemname.equals("2"))
-                    s.setLine(2, "GRASS");
-                  else if (itemname.equals("3"))
-                    s.setLine(2, "DIRT");
-                  else {
-                    s.setLine(2, itemname);
-                  }
-                  s.setLine(3, "B " + bprice + ":S " + sprice + ":A " + amount);
-                  s.update();
-                  plr.sendMessage(edition + ChatColor.LIGHT_PURPLE + "You have created a shop.");
-                } else {
-                  plr.sendMessage(edition + ChatColor.RED + "The sign must be Blank.");
-                }
-              }
-              else plr.sendMessage(edition + ChatColor.RED + "You need a chest under the sign to create a shop."); 
-            }
-            else
-            {
-              plr.sendMessage(edition + ChatColor.RED + "You must be looking at a sign to use this command.");
-            }
       }
     else{
       sender.sendMessage(edition + "This is for player use only.");
@@ -354,8 +268,6 @@ public final class Goldecon extends JavaPlugin
     }
 	return true;
     }
-	return true;
-}
   private String getTopPlayer()
   {
     int top_amount = 0;
@@ -460,7 +372,7 @@ public final class Goldecon extends JavaPlugin
 	    
 	    if (!(permsEXpl == null)) {
 		    permsEx = PermissionsEx.getPermissionManager();
-		    this.log.info(this.info.getName() + " Found and will use plugin "+ permsEXpl.getDescription().getFullName());
+		    Goldecon.log.info(Goldecon.info.getName() + " Found and will use plugin "+ permsEXpl.getDescription().getFullName());
 	        return 1;
 	    }
 	    
@@ -469,17 +381,17 @@ public final class Goldecon extends JavaPlugin
 	    
 	    if (!(perms3pl == null)) {
 	    	perms3 = ((Permissions) perms3pl).getHandler();
-		    this.log.info(this.info.getName() + " Found and will use plugin "+((Permissions)perms3pl).getDescription().getFullName());
+		    Goldecon.log.info(Goldecon.info.getName() + " Found and will use plugin "+((Permissions)perms3pl).getDescription().getFullName());
 	        return 2;
 	    }
 	    
 	    else{
 	    // Nothing there. Go to Opmode
-        this.log.info(this.info.getName() + " 3rd Party permissions system not detected, defaulting to OP / SuperPerm mode.");
+        Goldecon.log.info(Goldecon.info.getName() + " 3rd Party permissions system not detected, defaulting to OP / SuperPerm mode.");
         return 0;
 	    }
 	}
-  public boolean checkPerm(Player plyr, String node){
+  public static boolean checkPerm(Player plyr, String node){
 	if(permSystem == 1){
 	  	if(perms3.has(plyr, node) || plyr.isOp()){
 	  		return true;
@@ -496,9 +408,9 @@ public final class Goldecon extends JavaPlugin
 	  	}
 	}
   	else{
-        this.log.info(this.info.getName() + " The permission setup went wrong, Seek help! :(");
-        this.log.info(this.info.getName() + " Req Node: " + node);
-        this.log.info(this.info.getName() + " Perm System: " + permSystem);
+        log.info(info.getName() + " The permission setup went wrong, Seek help! :(");
+        log.info(info.getName() + " Req Node: " + node);
+        log.info(info.getName() + " Perm System: " + permSystem);
   		return false;
   	}
 	return false;
