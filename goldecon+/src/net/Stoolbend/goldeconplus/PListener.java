@@ -19,6 +19,7 @@ public class PListener implements Listener
 {
   Goldecon plugin;
   Save<Integer> bank2 = Goldecon.banks;
+  String edition = Goldecon.edition;
   //TODO Debug is enabled! Remember to disable
   boolean debug = false;
   
@@ -34,11 +35,11 @@ public class PListener implements Listener
       this.bank2.set(e.getPlayer().getName(), Integer.valueOf(0));
     }
 
-    e.getPlayer().sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GOLD +  "This server uses goldecon-SE as the economy!");
+    e.getPlayer().sendMessage(edition + ChatColor.GOLD +  "This server uses goldecon-SE as the economy!");
   }
   
   @EventHandler
-  public void onPlayerInteract(PlayerInteractEvent event) {
+  public void shopSignAction(PlayerInteractEvent event) {
     Player plr = event.getPlayer();
     if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
       Block block = event.getClickedBlock();
@@ -102,12 +103,12 @@ public class PListener implements Listener
                 	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
                 	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
                   }
-                plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GREEN + "You got " + itemamount + " " + line2.toLowerCase().replace("_", " ") + " for " + price + " gold.");
+                plr.sendMessage(edition + ChatColor.GREEN + "You got " + itemamount + " " + line2.toLowerCase().replace("_", " ") + " for " + price + " gold.");
               } else {
-                plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "Not enough in stock.");
+                plr.sendMessage(edition + ChatColor.RED + "Not enough in stock.");
               }
             } else {
-              plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You do not have enough money for that.");
+              plr.sendMessage(edition + ChatColor.RED + "You do not have enough money for that.");
             }
           }
         }
@@ -123,7 +124,7 @@ public class PListener implements Listener
             (!plr.isOp()) && 
             (!line1.equalsIgnoreCase(plr.getDisplayName()))) {
             event.setCancelled(true);
-            plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You can not open someone else's shop.");
+            plr.sendMessage(edition + ChatColor.RED + "You can not open someone else's shop.");
           }
         }
       }
@@ -191,12 +192,12 @@ public class PListener implements Listener
           	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
           	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
             }
-                plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GREEN + "You sold " + itemamount + " " + line2.toLowerCase().replace("_", " ") + " for " + price + " gold.");
+                plr.sendMessage(edition + ChatColor.GREEN + "You sold " + itemamount + " " + line2.toLowerCase().replace("_", " ") + " for " + price + " gold.");
               } else {
-                plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "Not enough gold in stock.");
+                plr.sendMessage(edition + ChatColor.RED + "Not enough gold in stock.");
               }
             }
-            else plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You do not have enough for that.");
+            else plr.sendMessage(edition + ChatColor.RED + "You do not have enough for that.");
           }
         }
 
@@ -212,7 +213,7 @@ public class PListener implements Listener
             (!plr.isOp()) && 
             (!line1.equalsIgnoreCase(plr.getDisplayName()))) {
             event.setCancelled(true);
-            plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You can not break someone else's shop.");
+            plr.sendMessage(edition + ChatColor.RED + "You can not break someone else's shop.");
           }
         }
       }

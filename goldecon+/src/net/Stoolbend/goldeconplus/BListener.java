@@ -12,6 +12,7 @@ import org.bukkit.event.block.SignChangeEvent;
 public class BListener implements Listener
 {
   Goldecon plugin;
+  String edition = Goldecon.edition;
 
   public BListener(Goldecon goldecon)
   {
@@ -31,10 +32,10 @@ public class BListener implements Listener
       if (line0.equalsIgnoreCase("[shop]"))
         if (!plr.getDisplayName().equalsIgnoreCase(line1)) {
           event.setCancelled(true);
-          plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You can not break someone else's shop.");
+          plr.sendMessage(edition + ChatColor.RED + "You can not break someone else's shop.");
           s.update();
         } else {
-          plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.AQUA + "You broke your shop.");
+          plr.sendMessage(edition + ChatColor.AQUA + "You broke your shop.");
         }
     }
   }
@@ -44,7 +45,7 @@ public class BListener implements Listener
   {
     if (event.getLine(0).equalsIgnoreCase("[shop]")) {
       event.setCancelled(true);
-      event.getPlayer().sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You cant create a shop that way.");
+      event.getPlayer().sendMessage(edition + ChatColor.RED + "You cant create a shop that way.");
     }
   }
 }

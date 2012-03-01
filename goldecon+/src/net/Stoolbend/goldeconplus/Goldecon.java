@@ -16,6 +16,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import ru.tehkode.permissions.PermissionManager;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
@@ -46,7 +49,13 @@ public final class Goldecon extends JavaPlugin
   public static int villager = 32;
   public static int wolf = 32;
   FileConfiguration config;
-  public static PermissionHandler permissions;
+  // Declare perm system variables
+  PermissionHandler perms3;
+  PermissionManager permsEx;
+  public static int permSystem;
+  // Display text thats editable
+  public static String ver = "1.5a";
+  public static String edition = ChatColor.GOLD + "[ge+] ";
 
   public void onEnable()
   {
@@ -84,7 +93,7 @@ public final class Goldecon extends JavaPlugin
     snowman = cfgGetInt("Good Mobs.Snowman", 0);
 
     saveConfig();
-    setupPermissions();
+    permSystem = setupPermissions();
     
     this.log.info(this.info.getName() + " has been enabled");
   }
@@ -103,12 +112,12 @@ public final class Goldecon extends JavaPlugin
       if (cmd.getName().equalsIgnoreCase("ge"))
       {
     	if(!checkPerm(player, "goldecon.core.use")){
-    		player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You dont have permission to do that, dave.");
+    		player.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
     		return true;
     	}
      if(args.length == 0){
         player.sendMessage(ChatColor.GOLD + "<- goldecon+ | Core Commands ->");
-        player.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version 1.5+ |");
+        player.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
         player.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");
           player.sendMessage(ChatColor.AQUA + "/gebank " + ChatColor.LIGHT_PURPLE + "deposit <amount>" + ChatColor.GREEN + "- deposits gold into bank");
           player.sendMessage(ChatColor.AQUA + "/gebank " + ChatColor.LIGHT_PURPLE + "withdraw <amount>" + ChatColor.GREEN + "- withdraws gold from bank");
@@ -133,20 +142,20 @@ public final class Goldecon extends JavaPlugin
                       player.sendMessage(ChatColor.DARK_PURPLE + "You paid " + args[1] + " " + amount + " gold.");
                       return true;
                     } else {
-                      player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You don't have that much money with you.");
+                      player.sendMessage(edition + ChatColor.RED + "You don't have that much money with you.");
                       return true;
                     }
                   } else {
-                    player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You have no money with you.");
+                    player.sendMessage(edition + ChatColor.RED + "You have no money with you.");
                     return true;
                   }
                 }
-                else player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "Can not find " + args[1] + ".");
+                else player.sendMessage(edition + ChatColor.RED + "Can not find " + args[1] + ".");
                 return true;
               }
             }
             else {
-              player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "/ge pay <player> <amount>");
+              player.sendMessage(edition + ChatColor.RED + "/ge pay <player> <amount>");
               return true;
             }
 
@@ -154,30 +163,30 @@ public final class Goldecon extends JavaPlugin
           else if (args[0].equalsIgnoreCase("stats")) {
             if (args.length == 1) {
               if (getTopPlayer() != "")
-                player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GREEN + "The top player is " + getTopPlayer() + " with " + Goldecon.banks.get(getTopPlayer()) + " gold.");
+                player.sendMessage(edition + ChatColor.GREEN + "The top player is " + getTopPlayer() + " with " + Goldecon.banks.get(getTopPlayer()) + " gold.");
               else {
-                player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "There is no top player.");
+                player.sendMessage(edition + ChatColor.RED + "There is no top player.");
                 return true;
               }
               if (getSecondPlayer() != "") {
-                player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GREEN + "The number 2 player is " + getSecondPlayer() + " with " + Goldecon.banks.get(getSecondPlayer()) + " gold.");
+                player.sendMessage(edition + ChatColor.GREEN + "The number 2 player is " + getSecondPlayer() + " with " + Goldecon.banks.get(getSecondPlayer()) + " gold.");
               }
               if (getThirdPlayer() != "") {
-                player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GREEN + "The number 3 player is " + getThirdPlayer() + " with " + Goldecon.banks.get(getThirdPlayer()) + " gold.");
+                player.sendMessage(edition + ChatColor.GREEN + "The number 3 player is " + getThirdPlayer() + " with " + Goldecon.banks.get(getThirdPlayer()) + " gold.");
               }
 
             }
             else if (args.length == 2) {
               if (Goldecon.banks.contains(args[1])) {
                 int amount1 = ((Integer)Goldecon.banks.get(args[1])).intValue();
-                player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GOLD + args[1] + " has " + amount1 + " gold in the bank.");
+                player.sendMessage(edition + ChatColor.GOLD + args[1] + " has " + amount1 + " gold in the bank.");
                 return true;
               } else {
-                player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "Can not find " + args[1] + ".");
+                player.sendMessage(edition + ChatColor.RED + "Can not find " + args[1] + ".");
                 return true;
               }
             } else {
-              player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "/ge stats [player name]");
+              player.sendMessage(edition + ChatColor.RED + "/ge stats [player name]");
               return true;
             }
           }
@@ -190,13 +199,13 @@ public final class Goldecon extends JavaPlugin
                 total += stack.getAmount();
               }
 
-              sender.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GOLD + "You have " + total + " gold with you.");
+              sender.sendMessage(edition + ChatColor.GOLD + "You have " + total + " gold with you.");
               return true;
             }
           }
           else
           {
-            player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "/ge < help | pay <player name> <amount> | stats [player name] >");
+            player.sendMessage(edition + ChatColor.RED + "/ge < help | pay <player name> <amount> | stats [player name] >");
             return true;
           }
         }
@@ -204,12 +213,12 @@ public final class Goldecon extends JavaPlugin
       else if (cmd.getName().equalsIgnoreCase("gebank"))
       {
       	if(!checkPerm(player, "goldecon.bank.use")){
-      		player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You dont have permission to do that, dave.");
+      		player.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
       		return true;
       	}
         if (args.length == 0) {
           int amount = ((Integer)Goldecon.banks.get(player.getName())).intValue();
-          player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GOLD + "You have " + amount + " gold in your bank.");
+          player.sendMessage(edition + ChatColor.GOLD + "You have " + amount + " gold in your bank.");
         }
         else if (args[0].equalsIgnoreCase("deposit")) {
           if (args.length == 2) {
@@ -218,9 +227,9 @@ public final class Goldecon extends JavaPlugin
               player.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, amount) });
               int old_amount = ((Integer)Goldecon.banks.get(player.getName())).intValue();
               Goldecon.banks.set(player.getName(), Integer.valueOf(old_amount + amount));
-              player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GOLD + "You now have " + (old_amount + amount) + " in your bank.");
+              player.sendMessage(edition + ChatColor.GOLD + "You now have " + (old_amount + amount) + " in your bank.");
             } else {
-              player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You don't have that much money with you.");
+              player.sendMessage(edition + ChatColor.RED + "You don't have that much money with you.");
             }
           }
 
@@ -232,15 +241,15 @@ public final class Goldecon extends JavaPlugin
             if (bankamount >= amount) {
               player.getInventory().addItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, amount) });
               Goldecon.banks.set(player.getName(), Integer.valueOf(bankamount - amount));
-              player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.GOLD + "You now have " + (bankamount - amount) + " in your bank.");
+              player.sendMessage(edition + ChatColor.GOLD + "You now have " + (bankamount - amount) + " in your bank.");
             } else {
-              player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You don't have that much money in your bank.");
+              player.sendMessage(edition + ChatColor.RED + "You don't have that much money in your bank.");
             }
           }
         }
         else
         {
-          player.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "/gebank < money | deposit <amount> | withdraw <amount> >");
+          player.sendMessage(edition + ChatColor.RED + "/gebank < money | deposit <amount> | withdraw <amount> >");
         }
       }
       else if (cmd.getName().equalsIgnoreCase("geshophelp")) {
@@ -248,11 +257,11 @@ public final class Goldecon extends JavaPlugin
           (args.length == 0)) {
           Player plr = (Player)sender;
         	if(!checkPerm(plr, "goldecon.shop.create")){
-        		plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You dont have permission to do that, dave.");
+        		plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
         		return true;
         	}
           plr.sendMessage(ChatColor.GREEN + "<- goldecon+ | Shop Commands ->");
-          plr.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version 1.2+ |");
+          plr.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
           plr.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");
           plr.sendMessage(ChatColor.AQUA + "COMMANDS:");
           plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshophelp");
@@ -272,11 +281,11 @@ public final class Goldecon extends JavaPlugin
     	          (args.length == 0)) {
     	          Player plr = (Player)sender;
     	        	if(!checkPerm(plr, "goldecon.shop.create")){
-    	        		plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You dont have permission to do that, dave.");
+    	        		plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
     	        		return true;
     	        	}
     	            plr.sendMessage(ChatColor.GREEN + "<- goldecon+ | Shop Commands ->");
-    	            plr.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version 1.2+ |");
+    	            plr.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
     	            plr.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");
     	          plr.sendMessage(ChatColor.AQUA + "COMMANDS:");
     	          plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshophelp");
@@ -296,7 +305,7 @@ public final class Goldecon extends JavaPlugin
         (args.length == 4)) {
         Player plr = (Player)sender;
     	if(!checkPerm(plr, "goldecon.shop.create")){
-    		plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You dont have permission to do that, dave.");
+    		plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
     		return true;
     	}
             Block block = plr.getTargetBlock(null, 5);
@@ -327,20 +336,20 @@ public final class Goldecon extends JavaPlugin
                   }
                   s.setLine(3, "B " + bprice + ":S " + sprice + ":A " + amount);
                   s.update();
-                  plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.LIGHT_PURPLE + "You have created a shop.");
+                  plr.sendMessage(edition + ChatColor.LIGHT_PURPLE + "You have created a shop.");
                 } else {
-                  plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "The sign must be Blank.");
+                  plr.sendMessage(edition + ChatColor.RED + "The sign must be Blank.");
                 }
               }
-              else plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You need a chest under the sign to create a shop."); 
+              else plr.sendMessage(edition + ChatColor.RED + "You need a chest under the sign to create a shop."); 
             }
             else
             {
-              plr.sendMessage(ChatColor.GOLD + "[ge+] " + ChatColor.RED + "You must be looking at a sign to use this command.");
+              plr.sendMessage(edition + ChatColor.RED + "You must be looking at a sign to use this command.");
             }
       }
     else{
-      sender.sendMessage(ChatColor.GOLD + "[ge+] " + "This is for player use only.");
+      sender.sendMessage(edition + "This is for player use only.");
       return true;
     }
 	return true;
@@ -444,27 +453,54 @@ public final class Goldecon extends JavaPlugin
 	  }
   }
   
-  private void setupPermissions() {
-	    if (permissions != null) {
-	        return;
+  private int setupPermissions() {
+	    
+	    // Check for PermissionsEX - If found, use it.
+	    Plugin permsEXpl = this.getServer().getPluginManager().getPlugin("PermissionsEx");
+	    
+	    if (!(permsEXpl == null)) {
+		    permsEx = PermissionsEx.getPermissionManager();
+		    this.log.info(this.info.getName() + " Found and will use plugin "+ permsEXpl.getDescription().getFullName());
+	        return 1;
 	    }
 	    
-	    Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
+	    // Check for Permissions 3.x - If found, use it.
+	    Plugin perms3pl = this.getServer().getPluginManager().getPlugin("Permissions");
 	    
-	    if (permissionsPlugin == null) {
-	        this.log.info(this.info.getName() + " Permission system not detected, defaulting to OP");
-	        return;
+	    if (!(perms3pl == null)) {
+	    	perms3 = ((Permissions) perms3pl).getHandler();
+		    this.log.info(this.info.getName() + " Found and will use plugin "+((Permissions)perms3pl).getDescription().getFullName());
+	        return 2;
 	    }
 	    
-	    permissions = ((Permissions) permissionsPlugin).getHandler();
-	    this.log.info(this.info.getName() + " Found and will use plugin "+((Permissions)permissionsPlugin).getDescription().getFullName());
+	    else{
+	    // Nothing there. Go to Opmode
+        this.log.info(this.info.getName() + " 3rd Party permissions system not detected, defaulting to OP / SuperPerm mode.");
+        return 0;
+	    }
 	}
   public boolean checkPerm(Player plyr, String node){
-  	if(permissions.has(plyr, node) || plyr.hasPermission(node) || plyr.isOp()){
-  		return true;
-  	}
+	if(permSystem == 1){
+	  	if(perms3.has(plyr, node) || plyr.isOp()){
+	  		return true;
+	  	}
+	}
+	else if(permSystem == 2){
+	  	if(permsEx.has(plyr, node) || plyr.isOp()){
+	  		return true;
+	  	}
+	}
+	else if(permSystem == 0){
+	  	if(plyr.hasPermission(node) || plyr.isOp()){
+	  		return true;
+	  	}
+	}
   	else{
+        this.log.info(this.info.getName() + " The permission setup went wrong, Seek help! :(");
+        this.log.info(this.info.getName() + " Req Node: " + node);
+        this.log.info(this.info.getName() + " Perm System: " + permSystem);
   		return false;
   	}
+	return false;
   }
 }
