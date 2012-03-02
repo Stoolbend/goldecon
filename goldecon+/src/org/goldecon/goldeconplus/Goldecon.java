@@ -5,8 +5,6 @@ import net.kierrow.io.Save;
 import net.kierrow.io.SaveManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,7 +25,7 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 public final class Goldecon extends JavaPlugin
 {
   public static Logger log;
-  static PluginDescriptionFile info;
+  public static PluginDescriptionFile info;
   static Save<Integer> banks;
   public static int creeper = 32;
   public static int zombie = 32;
@@ -51,14 +49,18 @@ public final class Goldecon extends JavaPlugin
   public static int villager = 32;
   public static int wolf = 32;
   FileConfiguration config;
-  public GoldeconShop geShop;
   // Declare perm system variables
   public static PermissionHandler perms3;
   public static PermissionManager permsEx;
   public static int permSystem;
   // Display text thats editable
-  public static String ver = "1.5c";
+  public static String ver = "1.6";
   public static String edition = ChatColor.GOLD + "[ge+] ";
+  // Set the CommandMethods class
+  CommandMethods cmdMth;
+  GoldeconShop geShop;
+  // WorldGuard status variable
+  public static int wgHook = 0;
 
   public void onEnable()
   {
@@ -70,6 +72,13 @@ public final class Goldecon extends JavaPlugin
     getServer().getPluginManager().registerEvents(new EListener(this), this);
     getServer().getPluginManager().registerEvents(new GoldeconShopListener(this), this);
     getServer().getPluginManager().registerEvents(new PListener(this), this);
+    
+    // Enable CommandMethods class
+    cmdMth = new CommandMethods(this);
+    geShop = new GoldeconShop(this);
+    
+    // Load permission system
+    permSystem = setupPermissions();
 
     creeper = cfgGetInt("Bad Mobs.Creeper", 5);
     creeper = cfgGetInt("Bad Mobs.Creeper", 5);
@@ -96,8 +105,6 @@ public final class Goldecon extends JavaPlugin
     snowman = cfgGetInt("Good Mobs.Snowman", 0);
 
     saveConfig();
-    permSystem = setupPermissions();
-    geShop = new GoldeconShop();
     
     Goldecon.log.info(Goldecon.info.getName() + " has been enabled");
   }
@@ -120,16 +127,7 @@ public final class Goldecon extends JavaPlugin
     		return true;
     	}
      if(args.length == 0){
-        player.sendMessage(ChatColor.GOLD + "<- goldecon+ | Core Commands ->");
-        player.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
-        player.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");
-          player.sendMessage(ChatColor.AQUA + "/gebank " + ChatColor.LIGHT_PURPLE + "deposit <amount>" + ChatColor.GREEN + "- deposits gold into bank");
-          player.sendMessage(ChatColor.AQUA + "/gebank " + ChatColor.LIGHT_PURPLE + "withdraw <amount>" + ChatColor.GREEN + "- withdraws gold from bank");
-          player.sendMessage(ChatColor.AQUA + "/gebank " + ChatColor.LIGHT_PURPLE + "money " + ChatColor.GREEN + "- gets your bank amount");
-          player.sendMessage(ChatColor.AQUA + "/ge " + ChatColor.LIGHT_PURPLE + "pay <player name> <amount>" + ChatColor.GREEN + "- pay a player");
-          player.sendMessage(ChatColor.AQUA + "/ge " + ChatColor.LIGHT_PURPLE + "stats " + ChatColor.GREEN + "- gets the goldecon stats");
-          player.sendMessage(ChatColor.AQUA + "/ge " + ChatColor.LIGHT_PURPLE + "help " + ChatColor.GREEN + "- shows this message");
-          return true;
+    	 cmdMth.coreHelp(player);
       }
       else
       {
@@ -166,17 +164,17 @@ public final class Goldecon extends JavaPlugin
           }
           else if (args[0].equalsIgnoreCase("stats")) {
             if (args.length == 1) {
-              if (getTopPlayer() != "")
-                player.sendMessage(edition + ChatColor.GREEN + "The top player is " + getTopPlayer() + " with " + Goldecon.banks.get(getTopPlayer()) + " gold.");
+              if (cmdMth.getTopPlayer() != "")
+                player.sendMessage(edition + ChatColor.GREEN + "The top player is " + cmdMth.getTopPlayer() + " with " + Goldecon.banks.get(cmdMth.getTopPlayer()) + " gold.");
               else {
                 player.sendMessage(edition + ChatColor.RED + "There is no top player.");
                 return true;
               }
-              if (getSecondPlayer() != "") {
-                player.sendMessage(edition + ChatColor.GREEN + "The number 2 player is " + getSecondPlayer() + " with " + Goldecon.banks.get(getSecondPlayer()) + " gold.");
+              if (cmdMth.getSecondPlayer() != "") {
+                player.sendMessage(edition + ChatColor.GREEN + "The number 2 player is " + cmdMth.getSecondPlayer() + " with " + Goldecon.banks.get(cmdMth.getSecondPlayer()) + " gold.");
               }
-              if (getThirdPlayer() != "") {
-                player.sendMessage(edition + ChatColor.GREEN + "The number 3 player is " + getThirdPlayer() + " with " + Goldecon.banks.get(getThirdPlayer()) + " gold.");
+              if (cmdMth.getThirdPlayer() != "") {
+                player.sendMessage(edition + ChatColor.GREEN + "The number 3 player is " + cmdMth.getThirdPlayer() + " with " + Goldecon.banks.get(cmdMth.getThirdPlayer()) + " gold.");
               }
 
             }
@@ -202,9 +200,12 @@ public final class Goldecon extends JavaPlugin
                   (stack.getType() != Material.GOLD_NUGGET)) continue;
                 total += stack.getAmount();
               }
-
               sender.sendMessage(edition + ChatColor.GOLD + "You have " + total + " gold with you.");
               return true;
+            }
+            // Fixes: gh-1 /ge help not displaying.
+            else if(args[0].equalsIgnoreCase("help")){
+            	cmdMth.coreHelp(player);
             }
           }
           else
@@ -258,8 +259,34 @@ public final class Goldecon extends JavaPlugin
       }
       
       // GoldeconShop command method is activated here after the core stuff
-      // TODO Move the /geshop command to goldecon.shops.GoldeconShop
-      // not working not sure why :/
+      // TODO Move the /geshop command to goldecon.shops.GoldeconShop}
+      // TODO /geshop command logic start
+      else if ((cmd.getName().equalsIgnoreCase("geshop")) && (args.length < 4)){
+          if (((sender instanceof Player)) &&
+          (args.length == 0)) {
+          Player plr = (Player)sender;
+          if(!checkPerm(plr, "goldecon.shop.create")){
+          plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
+          return true;
+          }
+          geShop.shopHelp(plr);
+          }
+         }
+           else if ((cmd.getName().equalsIgnoreCase("geshop")) &&
+             ((sender instanceof Player)) &&
+             (args.length == 4)) {
+             Player plr = (Player)sender;
+             if(!checkPerm(plr, "goldecon.shop.create")){
+           	  	plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
+           	  		return true;
+             }  
+             geShop.shopCreate(plr, args);
+          }
+         else{
+           sender.sendMessage(edition + "This is for player use only.");
+           return true;
+         }
+      }
       else if (cmd.getName().equalsIgnoreCase("geshophelp")) {
           if (((sender instanceof Player)) &&
             (args.length == 0)) {
@@ -268,185 +295,11 @@ public final class Goldecon extends JavaPlugin
            plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
            return true;
            }
-            plr.sendMessage(ChatColor.GREEN + "<- goldecon+ | Shop Commands ->");
-            player.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
-            plr.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");
-            plr.sendMessage(ChatColor.AQUA + "COMMANDS:");
-            plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshophelp");
-            plr.sendMessage(ChatColor.GOLD + "- Opens this");
-            plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshop " + ChatColor.DARK_PURPLE + "<item name> <amount> <buy price> <sell price>");
-            plr.sendMessage(ChatColor.GOLD + "- creates a shop");
-            plr.sendMessage(ChatColor.AQUA + "HOW TO USE:");
-            plr.sendMessage(ChatColor.LIGHT_PURPLE + "To Buy:");
-            plr.sendMessage(ChatColor.GOLD + "- Right click on the sign");
-            plr.sendMessage(ChatColor.LIGHT_PURPLE + "To Sell:");
-            plr.sendMessage(ChatColor.GOLD + "- Left click on the sign");
-            return true;
+           geShop.shopHelp(plr);
           }
-        }
-      else if ((cmd.getName().equalsIgnoreCase("geshop")) && (args.length < 4)){
-       if (((sender instanceof Player)) &&
-       (args.length == 0)) {
-       Player plr = (Player)sender;
-       if(!checkPerm(plr, "goldecon.shop.create")){
-       plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
-       return true;
-       }
-       plr.sendMessage(ChatColor.GREEN + "<- goldecon+ | Shop Commands ->");
-       player.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
-       plr.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");
-       plr.sendMessage(ChatColor.AQUA + "COMMANDS:");
-       plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshophelp");
-       plr.sendMessage(ChatColor.GOLD + "- Opens this");
-       plr.sendMessage(ChatColor.LIGHT_PURPLE + "/geshop " + ChatColor.DARK_PURPLE + "<item name> <amount> <buy price> <sell price>");
-       plr.sendMessage(ChatColor.GOLD + "- creates a shop");
-       plr.sendMessage(ChatColor.AQUA + "HOW TO USE:");
-       plr.sendMessage(ChatColor.LIGHT_PURPLE + "To Buy:");
-       plr.sendMessage(ChatColor.GOLD + "- Right click on the sign");
-       plr.sendMessage(ChatColor.LIGHT_PURPLE + "To Sell:");
-       plr.sendMessage(ChatColor.GOLD + "- Left click on the sign");
-       return true;
-       }
       }
-        else if ((cmd.getName().equalsIgnoreCase("geshop")) &&
-          ((sender instanceof Player)) &&
-          (args.length == 4)) {
-          Player plr = (Player)sender;
-       if(!checkPerm(plr, "goldecon.shop.create")){
-       plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
-       return true;
-       }
-              Block block = plr.getTargetBlock(null, 5);
-              String itemname = args[0].toUpperCase();
-              String amount = args[1];
-              String bprice = args[2];
-              String sprice = args[3];
-
-              if ((block.getTypeId() == 63) || (block.getTypeId() == 68)) {
-                Sign s = (Sign)block.getState();
-                String line0 = s.getLine(0);
-                String line1 = s.getLine(1);
-                String line2 = s.getLine(2);
-                String line3 = s.getLine(3);
-
-                if (block.getLocation().add(0.0D, -1.0D, 0.0D).getBlock().getType() == Material.CHEST) {
-                  if ((line0.equalsIgnoreCase("")) && (line1.equalsIgnoreCase("")) && (line2.equalsIgnoreCase("")) && (line3.equalsIgnoreCase(""))) {
-                    s.setLine(0, "[shop]");
-                    s.setLine(1, plr.getDisplayName());
-                    if (itemname.equals("1"))
-                      s.setLine(2, "STONE");
-                    else if (itemname.equals("2"))
-                      s.setLine(2, "GRASS");
-                    else if (itemname.equals("3"))
-                      s.setLine(2, "DIRT");
-                    else {
-                      s.setLine(2, itemname);
-                    }
-                    s.setLine(3, "B " + bprice + ":S " + sprice + ":A " + amount);
-                    s.update();
-                    plr.sendMessage(edition + ChatColor.LIGHT_PURPLE + "You have created a shop.");
-                  } else {
-                    plr.sendMessage(edition + ChatColor.RED + "The sign must be Blank.");
-                  }
-                }
-                else plr.sendMessage(edition + ChatColor.RED + "You need a chest under the sign to create a shop.");
-              }
-              else
-              {
-                plr.sendMessage(edition + ChatColor.RED + "You must be looking at a sign to use this command.");
-              }
-        }
-      else{
-        sender.sendMessage(edition + "This is for player use only.");
-        return true;
-      }
-  return true;
-      }
-  return true;
-  }
-  private String getTopPlayer()
-  {
-    int top_amount = 0;
-    String top_player = "";
-
-    String[] players = Goldecon.banks.getAllKeys();
-
-    for (int i = 0; i < players.length; i++) {
-      int amount = ((Integer)Goldecon.banks.get(players[i])).intValue();
-
-      if (amount > top_amount) {
-        top_amount = amount;
-        top_player = players[i];
-      }
-    }
-
-    return top_player;
-  }
-
-  private String getSecondPlayer() {
-    int top_amount = 0;
-    String top_player = "";
-
-    int second_amount = 0;
-    String second_player = "";
-
-    String[] players = Goldecon.banks.getAllKeys();
-
-    for (int i = 0; i < players.length; i++) {
-      int amount = ((Integer)Goldecon.banks.get(players[i])).intValue();
-
-      if (amount > top_amount) {
-        second_amount = top_amount;
-        second_player = top_player;
-
-        top_amount = amount;
-        top_player = players[i];
-      } else if (amount > second_amount) {
-        second_amount = amount;
-        second_player = players[i];
-      }
-    }
-
-    return second_player;
-  }
-
-  private String getThirdPlayer() {
-    int top_amount = 0;
-    String top_player = "";
-
-    int second_amount = 0;
-    String second_player = "";
-
-    int third_amount = 0;
-    String third_player = "";
-
-    String[] players = Goldecon.banks.getAllKeys();
-
-    for (int i = 0; i < players.length; i++) {
-      int amount = ((Integer)Goldecon.banks.get(players[i])).intValue();
-
-      if (amount > top_amount) {
-        third_amount = second_amount;
-        third_player = second_player;
-
-        second_amount = top_amount;
-        second_player = top_player;
-
-        top_amount = amount;
-        top_player = players[i];
-      } else if (amount > second_amount) {
-        third_amount = second_amount;
-        third_player = second_player;
-
-        second_amount = amount;
-        second_player = players[i];
-      } else if (amount > third_amount) {
-        third_amount = amount;
-        third_player = players[i];
-      }
-    }
-
-    return third_player;
+    // TODO /geshop command logic end
+    return true;
   }
   
   public int cfgGetInt(String path, int dflt){
