@@ -1,6 +1,6 @@
 name: goldecon-lite
 main: net.Stoolbend.goldeconlite.Goldecon
-version: 1.5a
+version: 1.5d
 authors: [Stoolbend]
 description: An extension to goldecon by boardinggamer & Kierrow. A simple economy using gold nuggets.
 permissions:
