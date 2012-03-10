@@ -57,8 +57,8 @@ public final class Goldecon extends JavaPlugin
   public static PermissionManager permsEx;
   public static int permSystem;
   // Display text thats editable
-  public static String ver = Goldecon.info.getVersion();
   public static String edition = ChatColor.GOLD + "[ge+] ";
+  public static String ver;
   // Set the CommandMethods class
   CommandMethods cmdMth;
   GoldeconShop geShop;
@@ -71,7 +71,8 @@ public final class Goldecon extends JavaPlugin
   {
     Goldecon.log = Logger.getLogger("Minecraft");
     Goldecon.info = getDescription();
-
+    ver = Goldecon.info.getVersion();
+    
     banks = SaveManager.load(this, "banks");
 
     // Load permission system
@@ -292,30 +293,24 @@ public final class Goldecon extends JavaPlugin
              }  
              geShop.shopCreate(plr, args);
           }
-         else{
-           sender.sendMessage(edition + "This is for player use only.");
-           return true;
-         }
-      }
-      else if (cmd.getName().equalsIgnoreCase("geshophelp")) {
-          if (((sender instanceof Player)) &&
-            (args.length == 0)) {
-            Player plr = (Player)sender;
-           if(!checkPerm(plr, "goldecon.shop.create")){
-           plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
-           return true;
+           else if (cmd.getName().equalsIgnoreCase("geshophelp")) {
+               if (((sender instanceof Player)) &&
+                 (args.length == 0)) {
+                 Player plr = (Player)sender;
+                if(!checkPerm(plr, "goldecon.shop.create")){
+                plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
+                return true;
+                }
+                geShop.shopHelp(plr);
+               }
            }
-           geShop.shopHelp(plr);
-          }
-      }
     // TODO /geshop command logic end
     
     // GoldeconRegionMarket command method is activated here
     // TODO Move the /geregion command to goldecon.regionmarket.GoldeconRegionMarket}
     // TODO /geregion command logic start
-    else if ((cmd.getName().equalsIgnoreCase("geregion")) && (args.length < 4)){
-        if (((sender instanceof Player)) &&
-        (args.length == 0)) {
+    else if ((cmd.getName().equalsIgnoreCase("geregion")) && (args.length < 2)){
+        if ((args.length == 0)) {
         Player plr = (Player)sender;
         if(!checkPerm(plr, "goldecon.region.sell")){
         plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
@@ -324,9 +319,7 @@ public final class Goldecon extends JavaPlugin
         geRegion.regionHelp(plr);
         }
        }
-         else if ((cmd.getName().equalsIgnoreCase("geregion")) &&
-           ((sender instanceof Player)) &&
-           (args.length == 4)) {
+         else if ((cmd.getName().equalsIgnoreCase("geregion")) && (args.length == 2)) {
            Player plr = (Player)sender;
            if(!checkPerm(plr, "goldecon.region.sell")){
          	  	plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
@@ -339,8 +332,9 @@ public final class Goldecon extends JavaPlugin
          return true;
          }
     // /geregion command logic end
-    return true;
 }
+	return true;
+  }
   
   public int cfgGetInt(String path, int dflt){
 	  int theNumb;
