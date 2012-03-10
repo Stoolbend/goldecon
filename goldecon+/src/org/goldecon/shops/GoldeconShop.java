@@ -52,7 +52,7 @@ public class GoldeconShop {
           if (block.getLocation().add(0.0D, -1.0D, 0.0D).getBlock().getType() == Material.CHEST) {
             if ((line0.equalsIgnoreCase("")) && (line1.equalsIgnoreCase("")) && (line2.equalsIgnoreCase("")) && (line3.equalsIgnoreCase(""))) {
               s.setLine(0, "[shop]");
-              s.setLine(1, plr.getDisplayName());
+              s.setLine(1, plr.getName());
               if (itemname.equals("1"))
                 s.setLine(2, "STONE");
               else if (itemname.equals("2"))

@@ -1,6 +1,5 @@
 package org.goldecon.shops;
 
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,7 +38,7 @@ public class GoldeconShopListener implements Listener
 	      String line1 = s.getLine(1);
 
 	      if (line0.equalsIgnoreCase("[shop]"))
-	        if (!plr.getDisplayName().equalsIgnoreCase(line1)) {
+	        if (!plr.getName().equalsIgnoreCase(line1)) {
 	          event.setCancelled(true);
 	          plr.sendMessage(edition + ChatColor.RED + "You can not break someone else's shop.");
 	          s.update();
@@ -80,7 +79,7 @@ public class GoldeconShopListener implements Listener
           int itemamount = Integer.parseInt(amount.replace("A ", "").trim());
          int price = Integer.parseInt(bprice.replace("B ", "").trim());
          if ((block2.getType() == Material.CHEST) && 
-           (!line1.equalsIgnoreCase(plr.getDisplayName()))) {
+           (!line1.equalsIgnoreCase(plr.getName()))) {
            if (plr.getInventory().contains(Material.GOLD_NUGGET, price)) {
              Chest chest = (Chest)block2.getState();
              if (chest.getInventory().contains(Material.valueOf(line2), itemamount)) {
@@ -130,6 +129,7 @@ public class GoldeconShopListener implements Listener
              plr.sendMessage(edition + ChatColor.RED + "You do not have enough money for that.");
            }
          }
+         else plr.sendMessage(edition + ChatColor.RED + "You can't use your own shop!");
        }
      }
      else if (block.getType() == Material.CHEST) {
@@ -140,7 +140,7 @@ public class GoldeconShopListener implements Listener
          String line1 = s.getLine(1);
           if ((line0.equalsIgnoreCase("[shop]")) && 
            (!plr.isOp()) && 
-           (!line1.equalsIgnoreCase(plr.getDisplayName()))) {
+           (!line1.equalsIgnoreCase(plr.getName()))) {
            event.setCancelled(true);
            plr.sendMessage(edition + ChatColor.RED + "You can not open someone else's shop.");
           }
@@ -165,7 +165,7 @@ public class GoldeconShopListener implements Listener
           int itemamount = Integer.parseInt(amount.replace("A ", " ").trim());
          int price = Integer.parseInt(sprice.replace("S ", " ").trim());
          if ((block2.getType() == Material.CHEST) && 
-           (!line1.equalsIgnoreCase(plr.getDisplayName()))) {
+           (!line1.equalsIgnoreCase(plr.getName()))) {
            Chest chest = (Chest)block2.getState();
            if (plr.getInventory().contains(Material.valueOf(line2), itemamount)) {
              if (chest.getInventory().contains(Material.GOLD_NUGGET, price)) {
@@ -214,6 +214,7 @@ public class GoldeconShopListener implements Listener
            }
            else plr.sendMessage(edition + ChatColor.RED + "You do not have enough for that.");
          }
+         else plr.sendMessage(edition + ChatColor.RED + "You can't use your own shop!");
        }
       }
      else if (block.getType() == Material.CHEST) {
@@ -224,7 +225,7 @@ public class GoldeconShopListener implements Listener
          String line1 = s.getLine(1);
           if ((line0.equalsIgnoreCase("[shop]")) && 
            (!plr.isOp()) && 
-           (!line1.equalsIgnoreCase(plr.getDisplayName()))) {
+           (!line1.equalsIgnoreCase(plr.getName()))) {
            event.setCancelled(true);
            plr.sendMessage(edition + ChatColor.RED + "You can not break someone else's shop.");
          }

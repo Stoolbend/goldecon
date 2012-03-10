@@ -1,17 +1,23 @@
 name: goldeconplus
 main: org.goldecon.goldeconplus.Goldecon
-version: 1.5c
-authors: [Stoolbend]
-description: An extension to goldecon by boardinggamer & Kierrow. A simple economy using gold nuggets.
+version: 1.6-alpha_2
+authors: [Stoolbend, boardinggamer, Kierrow]
+description: A simple economy based around gold nuggets.
 permissions:
  goldecon.shop.create:
   description: create shops
   default: op
  goldecon.core.use:
   description: use goldecon
-  default: op
+  default: true
  goldecon.bank.use:
-  description: use goldecon
+  description: use goldecon banks
+  default: op
+ goldecon.region.sell:
+  description: sell WG regions you can build on
+  default: op
+ goldecon.region.admin:
+  description: sell any WG region
   default: op
 commands:
  gebank:
@@ -30,3 +36,7 @@ commands:
   description:
   usage: <command>
   aliases: [goldeconshop, ges]
+ geregion:
+  description:
+  usage: <command>
+  aliases: [goldeconregion, ger]

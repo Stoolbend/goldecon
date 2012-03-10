@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.goldecon.regionmarket.GoldeconRegionListener;
+import org.goldecon.regionmarket.GoldeconRegionMarket;
 import org.goldecon.shops.GoldeconShop;
 import org.goldecon.shops.GoldeconShopListener;
 
@@ -21,6 +23,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public final class Goldecon extends JavaPlugin
 {
@@ -54,13 +57,15 @@ public final class Goldecon extends JavaPlugin
   public static PermissionManager permsEx;
   public static int permSystem;
   // Display text thats editable
-  public static String ver = "1.6";
+  public static String ver = Goldecon.info.getVersion();
   public static String edition = ChatColor.GOLD + "[ge+] ";
   // Set the CommandMethods class
   CommandMethods cmdMth;
   GoldeconShop geShop;
+  GoldeconRegionMarket geRegion;
   // WorldGuard status variable
   public static int wgHook = 0;
+  public static WorldGuardPlugin wg;
 
   public void onEnable()
   {
@@ -69,18 +74,23 @@ public final class Goldecon extends JavaPlugin
 
     banks = SaveManager.load(this, "banks");
 
-    getServer().getPluginManager().registerEvents(new EListener(this), this);
-    getServer().getPluginManager().registerEvents(new GoldeconShopListener(this), this);
-    getServer().getPluginManager().registerEvents(new PListener(this), this);
+    // Load permission system
+    permSystem = setupPermissions();
+    
+    // Hook into WorldGuard
+    wg = getWorldGuard();
     
     // Enable CommandMethods class
     cmdMth = new CommandMethods(this);
     geShop = new GoldeconShop(this);
+    geRegion = new GoldeconRegionMarket(this, wg);
     
-    // Load permission system
-    permSystem = setupPermissions();
+    // Initiate listeners
+    getServer().getPluginManager().registerEvents(new EListener(this), this);
+    getServer().getPluginManager().registerEvents(new GoldeconShopListener(this), this);
+    getServer().getPluginManager().registerEvents(new GoldeconRegionListener(this, wg), this);
+    getServer().getPluginManager().registerEvents(new PListener(this), this);
 
-    creeper = cfgGetInt("Bad Mobs.Creeper", 5);
     creeper = cfgGetInt("Bad Mobs.Creeper", 5);
     zombie = cfgGetInt("Bad Mobs.Zombie", 2);
     skeleton = cfgGetInt("Bad Mobs.Skeleton", 4);
@@ -299,8 +309,38 @@ public final class Goldecon extends JavaPlugin
           }
       }
     // TODO /geshop command logic end
+    
+    // GoldeconRegionMarket command method is activated here
+    // TODO Move the /geregion command to goldecon.regionmarket.GoldeconRegionMarket}
+    // TODO /geregion command logic start
+    else if ((cmd.getName().equalsIgnoreCase("geregion")) && (args.length < 4)){
+        if (((sender instanceof Player)) &&
+        (args.length == 0)) {
+        Player plr = (Player)sender;
+        if(!checkPerm(plr, "goldecon.region.sell")){
+        plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
+        return true;
+        }
+        geRegion.regionHelp(plr);
+        }
+       }
+         else if ((cmd.getName().equalsIgnoreCase("geregion")) &&
+           ((sender instanceof Player)) &&
+           (args.length == 4)) {
+           Player plr = (Player)sender;
+           if(!checkPerm(plr, "goldecon.region.sell")){
+         	  	plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
+         	  		return true;
+           }  
+           geRegion.rmsCreate(plr, args);
+        }
+       else{
+         sender.sendMessage(edition + "This is for player use only.");
+         return true;
+         }
+    // /geregion command logic end
     return true;
-  }
+}
   
   public int cfgGetInt(String path, int dflt){
 	  int theNumb;
@@ -313,7 +353,7 @@ public final class Goldecon extends JavaPlugin
 	  return theNumb;
 	  }
   }
-  
+
   private int setupPermissions() {
 	    
 	    // Check for PermissionsEX - If found, use it.
@@ -364,4 +404,19 @@ public final class Goldecon extends JavaPlugin
   	}
 	return false;
   }
+  
+  //Call this to load WorldGuard
+	public WorldGuardPlugin getWorldGuard(){
+		Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldGuard");
+		 
+	    // WorldGuard may not be loaded
+	    if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+	        Goldecon.log.info(Goldecon.info.getName() + " Couldn't hook into WorldGuard. Disabling GoldeconRegionMarket.");
+	        Goldecon.wgHook = 0;
+	        return null;
+	    }
+
+       Goldecon.wgHook = 1;
+	    return (WorldGuardPlugin) plugin;
+	}
 }
