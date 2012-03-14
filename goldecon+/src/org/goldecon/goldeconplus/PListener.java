@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.goldecon.bank.GoldeconBank;
 
 public class PListener implements Listener
 {
@@ -21,10 +22,7 @@ public class PListener implements Listener
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent e)
   {
-    if (!this.bank2.contains(e.getPlayer().getName())) {
-      this.bank2.set(e.getPlayer().getName(), Integer.valueOf(0));
-    }
-
+    GoldeconBank.playerJoin(e);
     e.getPlayer().sendMessage(edition + ChatColor.GOLD +  "This server uses goldecon as the economy!");
   }
 }

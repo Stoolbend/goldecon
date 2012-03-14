@@ -25,6 +25,11 @@ public class GoldeconRegionMarket {
 	}
 	
 	public boolean regionHelp(Player player){
+		// Check if WG is hooked in
+		if(!(Goldecon.wgHook == 1)){
+      	  	player.sendMessage(edition + ChatColor.RED + "You can't use RegionMarkets becasue WorldGuard isn't on the server!");
+			return false;
+		}
         player.sendMessage(ChatColor.YELLOW + "<- goldecon+ | Region Commands ->");
         player.sendMessage(ChatColor.RED + "| goldecon+ by Stoolbend - Version " + ver + " |");
         player.sendMessage(ChatColor.RED + "| goldecon by boardinggamer & Kierrow |");

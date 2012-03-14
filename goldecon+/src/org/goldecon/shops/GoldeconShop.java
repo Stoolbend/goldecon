@@ -60,6 +60,13 @@ public class GoldeconShop {
               else if (itemname.equals("3"))
                 s.setLine(2, "DIRT");
               else {
+              //TODO Ensure this fix for gh-3 is working
+            	Material item = Material.matchMaterial(itemname);
+            	if(item == null){
+                    plr.sendMessage(edition + ChatColor.RED + "Thats an invalid item name. Try entering the ID of the item or visit http://bit.ly/ge-items");
+                    block.setType(Material.AIR);
+                    return true;
+            	}
                 s.setLine(2, itemname);
               }
               s.setLine(3, "B " + bprice + ":S " + sprice + ":A " + amount);
@@ -77,4 +84,11 @@ public class GoldeconShop {
         }
 		return true;
 	}
+
+	public void closeShop(Player plr) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 }

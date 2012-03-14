@@ -76,51 +76,23 @@ public class GoldeconShopListener implements Listener
 	        String bprice = output[0];
 	        String amount = output[2];
 	        event.setCancelled(true);
-          int itemamount = Integer.parseInt(amount.replace("A ", "").trim());
+         int itemamount = Integer.parseInt(amount.replace("A ", "").trim());
          int price = Integer.parseInt(bprice.replace("B ", "").trim());
          if ((block2.getType() == Material.CHEST) && 
            (!line1.equalsIgnoreCase(plr.getName()))) {
            if (plr.getInventory().contains(Material.GOLD_NUGGET, price)) {
              Chest chest = (Chest)block2.getState();
-             if (chest.getInventory().contains(Material.valueOf(line2), itemamount)) {
-                 if(debug == true){
-                     // Debug stuff
-                     plr.sendMessage("Transaction: Selling");
-                     plr.sendMessage("itemamount = " + itemamount);
-                     plr.sendMessage("price = " + price);
-                     plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-                     plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-                     plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-                     plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-                   }
-                plr.getInventory().addItem(new ItemStack[] { new ItemStack(Material.valueOf(line2), itemamount) });
-               if(debug == true){
-               	  plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-               	  plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-               	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-               	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-                 }
+            //TODO Ensure this fix for gh-3 is working
+          	Material item = Material.matchMaterial(line2);
+          	if(item == null){
+                  plr.sendMessage(edition + ChatColor.RED + "This shop isnt working at the moment. Try re-making the shop using /geshop");
+                  return;
+          	}
+             if (chest.getInventory().contains(item, itemamount)) {
+                plr.getInventory().addItem(new ItemStack[] { new ItemStack(item, itemamount) });
                plr.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, price) });
-               if(debug == true){
-               	  plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-               	  plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-               	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-               	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-                 }
                chest.getInventory().addItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, price) });
-               if(debug == true){
-               	  plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-               	  plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-               	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-               	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-                 }
-               chest.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.valueOf(line2), itemamount) });
-               if(debug == true){
-               	  plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-               	  plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-               	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-               	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-                 }
+               chest.getInventory().removeItem(new ItemStack[] { new ItemStack(item, itemamount) });
                plr.sendMessage(edition + ChatColor.GREEN + "You got " + itemamount + " " + line2.toLowerCase().replace("_", " ") + " for " + price + " gold.");
              } else {
                plr.sendMessage(edition + ChatColor.RED + "Not enough in stock.");
@@ -130,7 +102,7 @@ public class GoldeconShopListener implements Listener
            }
          }
          else plr.sendMessage(edition + ChatColor.RED + "You can't use your own shop!");
-       }
+	  }
      }
      else if (block.getType() == Material.CHEST) {
        Block block3 = block.getLocation().add(0.0D, 1.0D, 0.0D).getBlock();
@@ -167,46 +139,18 @@ public class GoldeconShopListener implements Listener
          if ((block2.getType() == Material.CHEST) && 
            (!line1.equalsIgnoreCase(plr.getName()))) {
            Chest chest = (Chest)block2.getState();
-           if (plr.getInventory().contains(Material.valueOf(line2), itemamount)) {
+           //TODO Ensure this fix for gh-3 is working
+         	Material item = Material.matchMaterial(line2);
+         	if(item == null){
+                 plr.sendMessage(edition + ChatColor.RED + "This shop isnt working at the moment. Try re-making the shop using /geshop");
+                 return;
+         	}
+           if (plr.getInventory().contains(item, itemamount)) {
              if (chest.getInventory().contains(Material.GOLD_NUGGET, price)) {
-           if(debug == true){
-             // Debug stuff
-             plr.sendMessage("Transaction: Selling");
-             plr.sendMessage("itemamount = " + itemamount);
-             plr.sendMessage("price = " + price);
-             plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-             plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-             plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-             plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-           }
-               plr.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.valueOf(line2), itemamount) });
-           if(debug == true){
-         	  plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-         	  plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-         	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-         	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-           }
-               plr.getInventory().addItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, price) });
-           if(debug == true){
-         	  plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-         	  plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-         	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-         	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-           }
-           chest.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, price) });
-           if(debug == true){
-         	  plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-         	  plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-         	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-         	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-           }
-               chest.getInventory().addItem(new ItemStack[] { new ItemStack(Material.valueOf(line2), itemamount) });
-           if(debug == true){
-         	  plr.sendMessage("Gold in chest = " + chest.getInventory().all(Material.GOLD_NUGGET));
-         	  plr.sendMessage("Block in chest = " + chest.getInventory().all(Material.valueOf(line2)));
-         	  plr.sendMessage("Gold in inv = " + plr.getInventory().all(Material.GOLD_NUGGET));
-         	  plr.sendMessage("Block in inv = " + plr.getInventory().all(Material.valueOf(line2)));
-           }
+               plr.getInventory().removeItem(new ItemStack[] { new ItemStack(item, itemamount) });
+               plr.getInventory().addItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, price) });           }
+               chest.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, price) });
+               chest.getInventory().addItem(new ItemStack[] { new ItemStack(item, itemamount) });
                plr.sendMessage(edition + ChatColor.GREEN + "You sold " + itemamount + " " + line2.toLowerCase().replace("_", " ") + " for " + price + " gold.");
              } else {
                plr.sendMessage(edition + ChatColor.RED + "Not enough gold in stock.");
@@ -216,7 +160,6 @@ public class GoldeconShopListener implements Listener
          }
          else plr.sendMessage(edition + ChatColor.RED + "You can't use your own shop!");
        }
-      }
      else if (block.getType() == Material.CHEST) {
        Block block3 = block.getLocation().add(0.0D, 1.0D, 0.0D).getBlock();
        if ((block3.getTypeId() == 63) || (block3.getTypeId() == 68)) {
