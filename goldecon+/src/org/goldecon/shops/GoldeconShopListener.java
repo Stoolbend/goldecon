@@ -32,19 +32,25 @@ public class GoldeconShopListener implements Listener
 		Block block = event.getBlock();
 		Player plr = event.getPlayer();
 
-	    if ((block.getTypeId() == 63) || (block.getTypeId() == 68)) {
+	    if ((block.getTypeId() == 63) || (block.getTypeId() == 68))
+	    {
 	      Sign s = (Sign)block.getState();
 	      String line0 = s.getLine(0);
 	      String line1 = s.getLine(1);
 
 	      if (line0.equalsIgnoreCase("[shop]"))
-	        if (!plr.getName().equalsIgnoreCase(line1)) {
+	      {
+	        if (!plr.getName().equalsIgnoreCase(line1))
+	        {
 	          event.setCancelled(true);
 	          plr.sendMessage(edition + ChatColor.RED + "You can not break someone else's shop.");
 	          s.update();
-	        } else {
+	        }
+	        else
+	        {
 	          plr.sendMessage(edition + ChatColor.AQUA + "You broke your shop.");
 	        }
+	      }
 	    }
 	}
 
