@@ -13,6 +13,7 @@ public class PListener implements Listener
   Goldecon plugin;
   Save<Integer> bank2 = Goldecon.banks;
   String edition = Goldecon.edition;
+  String ver = Goldecon.ver;
   
   public PListener(Goldecon aThis)
   {
@@ -22,7 +23,12 @@ public class PListener implements Listener
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent e)
   {
-    GoldeconBank.playerJoin(e);
     e.getPlayer().sendMessage(edition + ChatColor.GOLD +  "This server uses goldecon as the economy!");
+    if(edition.contains("alpha") || edition.contains("beta") || edition.contains("dev")){
+        e.getPlayer().sendMessage(edition + ChatColor.GREEN + "This is a development version! Please report any problems");
+        e.getPlayer().sendMessage(edition + ChatColor.GREEN + "at http://github.com/Stoolbend/goldecon/issues. Thank you!");
+    }
+    e.getPlayer().sendMessage(edition + ChatColor.YELLOW +  "Version " + ver + " | http://bit.ly/goldecon");
+    GoldeconBank.playerJoin(e);
   }
 }

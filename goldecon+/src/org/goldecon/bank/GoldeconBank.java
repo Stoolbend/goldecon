@@ -12,17 +12,19 @@ public class GoldeconBank {
 	Goldecon plugin;
 	// Set the text for system messages
 	String ver = Goldecon.ver;
-	String edition = Goldecon.edition;
+	static String edition = Goldecon.edition;
 	
 	public GoldeconBank(Goldecon goldecon){
 		this.plugin = goldecon;
 	}
 	
 	public static void playerJoin(PlayerJoinEvent e){
+		Player player = e.getPlayer();
 		if (!Goldecon.banks.contains(e.getPlayer().getName()))
 		{
 		      Goldecon.banks.set(e.getPlayer().getName(), Integer.valueOf(0));
 		}
+    	player.sendMessage(edition + ChatColor.YELLOW + "You have " + Goldecon.banks.get(player.getName()) + " in your bank");
 	}
 	
 	public void deposit(Player player, int amount){

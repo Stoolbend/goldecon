@@ -1,6 +1,6 @@
 name: goldeconplus
 main: org.goldecon.goldeconplus.Goldecon
-version: 1.6-alpha_4
+version: 1.6-alpha_5
 authors: [Stoolbend, boardinggamer, Kierrow]
 description: A simple economy based around gold nuggets.
 permissions:
@@ -23,22 +23,22 @@ permissions:
   description: sell any WG region
   default: op
 commands:
- gebank:
-  description:
-  usage: <command>
-  aliases: [goldeconbank]
  ge:
   description:
   usage: <command>
   aliases: [goldecon]
- geshophelp:
-  description: help menu for shops
-  usage: <command>
-  aliases: [goldeconshophelp, geshelp]
  geshop:
   description:
   usage: <command>
   aliases: [goldeconshop, ges]
+ geshophelp:
+  description: help menu for shops
+  usage: <command>
+  aliases: [goldeconshophelp, geshelp]
+ gebank:
+  description:
+  usage: <command>
+  aliases: [goldeconbank]
  geregion:
   description:
   usage: <command>

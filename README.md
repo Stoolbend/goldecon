@@ -1,6 +1,6 @@
 # goldecon+ - A Simple economy based around gold nuggets
 
-Current compatibility status: CraftBukkit 1.2.3-R0.2
+Current compatibility status: CraftBukkit 1.2.3-R0.2 & Below
 
 Last tested on: CraftBukkit 1.2.3-R0.2
 
@@ -23,6 +23,7 @@ as individual plugin files) which are listed below.
 
 * (Coming in 1.6) GoldeconAPI - Allows you to hook into goldecon's functions from other plugins.
 
+* (Coming in 1.6) Goldecon Vault Connector - Allows plugins that use the Vault API to use Goldecon!
 
 ## Permissions
  * goldecon.core.use
