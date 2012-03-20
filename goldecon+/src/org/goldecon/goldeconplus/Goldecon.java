@@ -14,6 +14,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.goldecon.bank.GoldeconBank;
+import org.goldecon.drops.GoldeconDrops;
+import org.goldecon.drops.GoldeconDropsListener;
 import org.goldecon.regionmarket.GoldeconRegionListener;
 import org.goldecon.regionmarket.GoldeconRegionMarket;
 import org.goldecon.shops.GoldeconShop;
@@ -28,31 +30,12 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public final class Goldecon extends JavaPlugin
 {
+  // Drops
   public static Logger log;
   public static PluginDescriptionFile info;
   public static Save<Integer> banks;
-  public static int creeper = 32;
-  public static int zombie = 32;
-  public static int skeleton = 32;
-  public static int ghast = 32;
-  public static int enderman = 32;
-  public static int cow = 32;
-  public static int pig = 32;
-  public static int chicken = 32;
-  public static int sheep = 32;
-  public static int mushroomcow = 32;
-  public static int blaze = 32;
-  public static int pigman = 32;
-  public static int enderdragon = 32;
-  public static int cavespider = 32;
-  public static int spider = 32;
-  public static int silverfish = 32;
-  public static int snowman = 32;
-  public static int slime = 32;
-  public static int squid = 32;
-  public static int villager = 32;
-  public static int wolf = 32;
   FileConfiguration config;
+  
   // Declare perm system variables
   public static PermissionHandler perms3;
   public static PermissionManager permsEx;
@@ -65,68 +48,58 @@ public final class Goldecon extends JavaPlugin
   GoldeconShop geShop;
   GoldeconRegionMarket geRegion;
   GoldeconBank geBank;
+  GoldeconDrops geDrops;
   // WorldGuard status variable
   public static int wgHook = 0;
   public static WorldGuardPlugin wg;
 
   public void onEnable()
   {
+	Goldecon.log.info(edition + " goldecon+ " + ver + "is starting up...");
+	
     Goldecon.log = Logger.getLogger("Minecraft");
     Goldecon.info = getDescription();
     ver = Goldecon.info.getVersion();
-    
-    banks = SaveManager.load(this, "banks");
 
     // Load permission system
     permSystem = setupPermissions();
+    Goldecon.log.info(edition + " Permission Setup - DONE");
     
     // Hook into WorldGuard
     wg = getWorldGuard();
+    Goldecon.log.info(edition + " WorldGuard Setup - DONE");
     
-    // Enable CommandMethods class
+    // Enable sub-classes
     cmdMth = new CommandMethods(this);
     geShop = new GoldeconShop(this);
     geRegion = new GoldeconRegionMarket(this, wg);
     geBank = new GoldeconBank(this);
+    geDrops = new GoldeconDrops(this);
+    Goldecon.log.info(edition + " Extentions - DONE");
     
     // Initiate listeners
-    getServer().getPluginManager().registerEvents(new EListener(this), this);
     getServer().getPluginManager().registerEvents(new PListener(this), this);
+    getServer().getPluginManager().registerEvents(new GoldeconDropsListener(), this);
     getServer().getPluginManager().registerEvents(new GoldeconShopListener(this), this);
     getServer().getPluginManager().registerEvents(new GoldeconRegionListener(this, wg), this);
+    Goldecon.log.info(edition + " Listeners - DONE");
     
-    creeper = cfgGetInt("Bad Mobs.Creeper", 5);
-    zombie = cfgGetInt("Bad Mobs.Zombie", 2);
-    skeleton = cfgGetInt("Bad Mobs.Skeleton", 4);
-    ghast = cfgGetInt("Bad Mobs.Ghast", 10);
-    enderman = cfgGetInt("Bad Mobs.Endermen", 7);
-    blaze = cfgGetInt("Bad Mobs.Blaze", 4);
-    pigman = cfgGetInt("Bad Mobs.Pigmen", 1);
-    enderdragon = cfgGetInt("Bad Mobs.Ender Dragon", 50);
-    cavespider = cfgGetInt("Bad Mobs.Cave Spider", 8);
-    spider = cfgGetInt("Bad Mobs.Spider", 5);
-    silverfish = cfgGetInt("Bad Mobs.Silverfish", 3);
-    slime = cfgGetInt("Bad Mobs.Slime", 15);
-    cow = cfgGetInt("Good Mobs.Cow", 2);
-    chicken = cfgGetInt("Good Mobs.Chicken", 2);
-    pig = cfgGetInt("Good Mobs.Pig", 2);
-    sheep = cfgGetInt("Good Mobs.Sheep", 2);
-    mushroomcow = cfgGetInt("Good Mobs.Mushroom Cow", 5);
-    villager = cfgGetInt("Good Mobs.Villager", 8);
-    squid = cfgGetInt("Good Mobs.Squid", 1);
-    wolf = cfgGetInt("Good Mobs.Wolf", 5);
-    snowman = cfgGetInt("Good Mobs.Snowman", 0);
-
-    saveConfig();
+    // DROPS - Load drop amounts
+    geDrops.initDrops();
+    Goldecon.log.info(edition + " Drops - DONE");
     
-    SaveManager.load(this, "banks");
+    // BANK - Load bank from file
+    banks = SaveManager.load(this, "banks");
+    Goldecon.log.info(edition + " Load bank file - DONE");
     
     Goldecon.log.info(Goldecon.info.getName() + " has been enabled");
   }
 
   public void onDisable()
   {
+	Goldecon.log.info(edition + " goldecon+ " + ver + "is shutting down...");
     SaveManager.save(this, banks);
+    Goldecon.log.info(edition + " Save bank file - DONE");
 
     Goldecon.log.info(Goldecon.info.getName() + " has been disabled");
   }
@@ -362,6 +335,18 @@ public final class Goldecon extends JavaPlugin
 	  return theNumb;
 	  }
   }
+  
+  public String cfgGetStr(String path, String dflt){
+	  String theString;
+	  theString = getConfig().getString(path, dflt);
+	  if(theString == dflt){
+		  this.getConfig().set(path, dflt);
+		  return dflt;
+	  }
+	  else{
+	  return theString;
+	  }
+  }
 
   private int setupPermissions() {
 	    
@@ -370,7 +355,7 @@ public final class Goldecon extends JavaPlugin
 	    
 	    if (!(permsEXpl == null)) {
 		    permsEx = PermissionsEx.getPermissionManager();
-		    Goldecon.log.info(Goldecon.info.getName() + " Found and will use plugin "+ permsEXpl.getDescription().getFullName());
+		    Goldecon.log.info(edition + " Found and will use plugin "+ permsEXpl.getDescription().getFullName());
 	        return 1;
 	    }
 	    
@@ -379,13 +364,13 @@ public final class Goldecon extends JavaPlugin
 	    
 	    if (!(perms3pl == null)) {
 	    	perms3 = ((Permissions) perms3pl).getHandler();
-		    Goldecon.log.info(Goldecon.info.getName() + " Found and will use plugin "+((Permissions)perms3pl).getDescription().getFullName());
+		    Goldecon.log.info(edition + " Found and will use plugin "+((Permissions)perms3pl).getDescription().getFullName());
 	        return 2;
 	    }
 	    
 	    else{
 	    // Nothing there. Go to Opmode
-        Goldecon.log.info(Goldecon.info.getName() + " 3rd Party permissions system not detected, defaulting to OP / SuperPerm mode.");
+        Goldecon.log.info(edition + " 3rd Party permissions system not detected, defaulting to OP / SuperPerm mode.");
         return 0;
 	    }
 	}

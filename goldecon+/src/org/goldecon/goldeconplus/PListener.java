@@ -23,8 +23,8 @@ public class PListener implements Listener
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent e)
   {
-    e.getPlayer().sendMessage(edition + ChatColor.GOLD +  "This server uses goldecon as the economy!");
-    if(edition.contains("alpha") || edition.contains("beta") || edition.contains("dev")){
+    //e.getPlayer().sendMessage(edition + ChatColor.GOLD +  "This server uses goldecon as the economy!");
+    if(ver.contains("alpha") || ver.contains("beta") || ver.contains("dev")){
         e.getPlayer().sendMessage(edition + ChatColor.GREEN + "This is a development version! Please report any problems");
         e.getPlayer().sendMessage(edition + ChatColor.GREEN + "at http://github.com/Stoolbend/goldecon/issues. Thank you!");
     }
