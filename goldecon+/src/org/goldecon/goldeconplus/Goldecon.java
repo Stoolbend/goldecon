@@ -40,26 +40,28 @@ public final class Goldecon extends JavaPlugin
   public static PermissionHandler perms3;
   public static PermissionManager permsEx;
   public static int permSystem;
+  
   // Display text thats editable
   public static String edition = ChatColor.GOLD + "[ge+] ";
   public static String ver;
+  
   // Set the CommandMethods class
   CommandMethods cmdMth;
   GoldeconShop geShop;
   GoldeconRegionMarket geRegion;
   GoldeconBank geBank;
   GoldeconDrops geDrops;
+  
   // WorldGuard status variable
   public static int wgHook = 0;
   public static WorldGuardPlugin wg;
 
   public void onEnable()
   {
-	Goldecon.log.info(edition + " goldecon+ " + ver + "is starting up...");
-	
     Goldecon.log = Logger.getLogger("Minecraft");
     Goldecon.info = getDescription();
     ver = Goldecon.info.getVersion();
+	Goldecon.log.info(edition + " goldecon+ " + ver + "is starting up...");
 
     // Load permission system
     permSystem = setupPermissions();
