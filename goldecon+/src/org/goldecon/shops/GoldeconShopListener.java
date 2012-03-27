@@ -1,5 +1,7 @@
 package org.goldecon.shops;
 
+import java.util.HashMap;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.goldecon.goldeconplus.Goldecon;
@@ -20,10 +23,35 @@ public class GoldeconShopListener implements Listener
 	boolean debug = false;
 	Goldecon plugin;
 	String edition = Goldecon.edition;
+	HashMap<String, Integer> wizMap = GoldeconShop.wizMap;
   
 	public GoldeconShopListener(Goldecon goldecon)
 	{
 	  this.plugin = goldecon;
+	}
+	
+	@EventHandler
+	public void shopChatListener(PlayerChatEvent e){
+		Player player = e.getPlayer();
+		int stage;
+		if(wizMap.containsKey(player.getName()))
+		{
+			if(e.getMessage().equalsIgnoreCase("quit"))
+			{
+				wizMap.remove(player.getName());
+				e.setCancelled(true);
+				player.sendMessage(ChatColor.DARK_PURPLE + "[geShops] " + ChatColor.GOLD + "You have quit the wizard.");
+			}
+			else
+			{
+				stage = wizMap.get(player.getName());
+				if(stage>=0)
+				{
+					GoldeconShop.shopWizard(player, stage, e.getMessage());
+					e.setCancelled(true);
+				}
+			}
+		}
 	}
 	
 	@EventHandler

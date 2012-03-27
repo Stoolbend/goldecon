@@ -1,6 +1,6 @@
 name: goldeconplus
 main: org.goldecon.goldeconplus.Goldecon
-version: 1.6-alpha_6
+version: 1.6-RC_1
 authors: [Stoolbend, boardinggamer, Kierrow]
 description: A simple economy based around gold nuggets.
 permissions:
@@ -12,6 +12,9 @@ permissions:
   default: true
  goldecon.shop.create:
   description: create shops
+  default: op
+ goldecon.shop.admin:
+  description: destroy and update any shop
   default: op
  goldecon.bank.use:
   description: use goldecon banks

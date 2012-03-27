@@ -61,7 +61,7 @@ public final class Goldecon extends JavaPlugin
     Goldecon.log = Logger.getLogger("Minecraft");
     Goldecon.info = getDescription();
     ver = Goldecon.info.getVersion();
-	Goldecon.log.info(edition + " goldecon+ " + ver + "is starting up...");
+	Goldecon.log.info(edition + " goldecon+ " + ver + " is starting up...");
 
     // Load permission system
     permSystem = setupPermissions();
@@ -90,6 +90,10 @@ public final class Goldecon extends JavaPlugin
     geDrops.initDrops();
     Goldecon.log.info(edition + " Drops - DONE");
     
+    // SHOPS - Run shop init method
+    geShop.initShops();
+    Goldecon.log.info(edition + " Shops - DONE");
+    
     // BANK - Load bank from file
     banks = SaveManager.load(this, "banks");
     Goldecon.log.info(edition + " Load bank file - DONE");
@@ -99,7 +103,7 @@ public final class Goldecon extends JavaPlugin
 
   public void onDisable()
   {
-	Goldecon.log.info(edition + " goldecon+ " + ver + "is shutting down...");
+	Goldecon.log.info(edition + " goldecon+ " + ver + " is shutting down...");
     SaveManager.save(this, banks);
     Goldecon.log.info(edition + " Save bank file - DONE");
 
@@ -219,14 +223,20 @@ public final class Goldecon extends JavaPlugin
         else if (args[0].equalsIgnoreCase("deposit")) {
           if (args.length == 2) {
       		int amount = Integer.parseInt(args[1]);
-      		geBank.deposit(player, amount);
+      		if(amount>=1){
+      			geBank.deposit(player, amount);
+      		}
+      		else player.sendMessage(edition + ChatColor.RED + "You can't deposit less than 1 gold.");
           }
 
         }
         else if (args[0].equalsIgnoreCase("withdraw")) {
           if (args.length == 2) {
             int amount = Integer.parseInt(args[1]);
-            geBank.withdraw(player, amount);
+      		if(amount>=1){
+      			geBank.withdraw(player, amount);
+      		}
+      		else player.sendMessage(edition + ChatColor.RED + "You can't deposit less than 1 gold.");
           }
         }
         else if(args[0].equalsIgnoreCase("view") && args.length == 2)
@@ -250,7 +260,7 @@ public final class Goldecon extends JavaPlugin
           if (((sender instanceof Player)) && (args.length == 0))
           {
         	  Player plr = (Player)sender;
-        	  if(!checkPerm(plr, "goldecon.shop.create"))
+        	  if(!checkPerm(plr, "goldecon.shop.use"))
         	  {
         		  plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
         		  return true;
@@ -258,7 +268,6 @@ public final class Goldecon extends JavaPlugin
         	  geShop.shopHelp(plr);
           }
       }
-      //TODO Bugfix gh-2: Add /geshop close to kill the shop.
       else if ((cmd.getName().equalsIgnoreCase("geshop")) && (args.length == 1)){
           if (((sender instanceof Player)) && (args[0].equalsIgnoreCase("close")))
           {
@@ -270,29 +279,16 @@ public final class Goldecon extends JavaPlugin
         	  }
         	  geShop.closeShop(plr);
           }
-      }
-      else if ((cmd.getName().equalsIgnoreCase("geshop")) && ((sender instanceof Player)) && (args.length == 4))
-      {
-    	  Player plr = (Player)sender;
-          if(!checkPerm(plr, "goldecon.shop.create"))
+          if (((sender instanceof Player)) && (args[0].equalsIgnoreCase("create")))
           {
-         	  	plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
-         	    return true;
-          }  
-          geShop.shopCreate(plr, args);
-      }
-      else if (cmd.getName().equalsIgnoreCase("geshophelp"))
-      {
-    	  if (((sender instanceof Player)) && (args.length == 0))
-    	  {
-    		  Player plr = (Player)sender;
-          	if(!checkPerm(plr, "goldecon.shop.create"))
-          	{
-          		plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
-          		return true;
-          	}
-          	geShop.shopHelp(plr);
-    	  }
+        	  Player plr = (Player)sender;
+        	  if(!checkPerm(plr, "goldecon.shop.create"))
+        	  {
+        		  plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
+        		  return true;
+        	  }
+        	  GoldeconShop.shopWizard(plr, 0, "#start_from_cmd");
+          }
       }
     // /geshop command logic end
     
@@ -393,9 +389,10 @@ public final class Goldecon extends JavaPlugin
 	  	}
 	}
   	else{
-        log.info(info.getName() + " The permission setup went wrong, Seek help! :(");
-        log.info(info.getName() + " Req Node: " + node);
-        log.info(info.getName() + " Perm System: " + permSystem);
+        log.info(edition + " The permission setup went wrong, Seek help! :(");
+        log.info(edition + " Req Node: " + node);
+        log.info(edition + " Perm System: " + permSystem);
+        log.info(edition + " Everybody is dead, dave...");
   		return false;
   	}
 	return false;
@@ -407,7 +404,7 @@ public final class Goldecon extends JavaPlugin
 		 
 	    // WorldGuard may not be loaded
 	    if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-	        Goldecon.log.info(Goldecon.info.getName() + " Couldn't hook into WorldGuard. Disabling GoldeconRegionMarket.");
+	        Goldecon.log.info(edition + " Couldn't hook into WorldGuard. Disabling GoldeconRegionMarket.");
 	        Goldecon.wgHook = 0;
 	        return null;
 	    }

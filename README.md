@@ -1,10 +1,10 @@
 # goldecon+ - A Simple economy based around gold nuggets
 
-Current compatibility status: CraftBukkit 1.2.3-R0.2 & Below
+Current compatibility status: CraftBukkit 1.2.4-R0.1 & Below
 
-Last tested on: CraftBukkit 1.2.3-R0.2
+Last tested on: CraftBukkit 1.2.4-R0.1
 
-Currently in development on: Bukkit 1.2.3-R0.2
+Currently in development on: Bukkit 1.2.4-R0.1
 
 ## A little intro
 goldecon+ (plus) is a version of boardinggamer's & Kierrow's "goldecon" plugin with
