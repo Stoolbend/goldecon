@@ -83,14 +83,14 @@ public class GoldeconShop {
 		        {
 			    	plr.sendMessage(pre + ChatColor.RED + "Error: Your sign needs to look like this...");
 			    	plr.sendMessage(pre + ChatColor.YELLOW + "| [newshop] |");
-			    	plr.sendMessage(pre + ChatColor.YELLOW + "|              |");
-			    	plr.sendMessage(pre + ChatColor.YELLOW + "|              |");
-			    	plr.sendMessage(pre + ChatColor.YELLOW + "|              |");
+			    	plr.sendMessage(pre + ChatColor.YELLOW + "|               |");
+			    	plr.sendMessage(pre + ChatColor.YELLOW + "|               |");
+			    	plr.sendMessage(pre + ChatColor.YELLOW + "|               |");
 		        }
 			}	          
 		    else
 		    {
-		    	plr.sendMessage(pre + ChatColor.RED + "Error: You need to be looking at a blank sign with [shop] on the top line.");
+		    	plr.sendMessage(pre + ChatColor.RED + "Error: You need to be looking at a blank sign with [newshop] on the top line.");
 		    }
 		}
 		else if(stage == 1){
@@ -127,9 +127,9 @@ public class GoldeconShop {
     			plr.sendMessage(pre + ChatColor.DARK_GREEN + "Item: " + ChatColor.GREEN + itemMap.get(plr.getName()));
     			plr.sendMessage(pre + ChatColor.DARK_GREEN + "Amount: " + ChatColor.GREEN + amntMap.get(plr.getName()));
     			plr.sendMessage(pre + ChatColor.DARK_PURPLE + "------------------");
-    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "Step 3 - Enter the price you want to sell your goods");
-    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "for. Eg: I want to sell 32 STONE for 32 Gold nuggets.");
-    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "This is what the players will pay for your items.");
+    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "Step 3 - Enter the price you want to sell your");
+    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "goods for. Eg: I want to sell 32 STONE for 32 Gold");
+    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "nuggets. This is what the players will pay for your items.");
     			plr.sendMessage(pre + ChatColor.GREEN + "Just type it in the chat below. Type 'quit' to leave the wizard.");
     			wizMap.put(plr.getName(), 3);
 			}
@@ -236,8 +236,8 @@ public class GoldeconShop {
 			                s.update();
 			    			plr.sendMessage(pre + ChatColor.DARK_GREEN + "Completed!");
 			    			plr.sendMessage(pre + ChatColor.DARK_PURPLE + "------------------");
-			    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "Your shop is complete. Now you just need players to");
-			    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "buy or sell to your shop.");
+			    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "Your shop is complete. Now you just need players");
+			    			plr.sendMessage(pre + ChatColor.LIGHT_PURPLE + "to buy or sell to your shop.");
 			    			plr.sendMessage(pre + ChatColor.GREEN + "Happy selling!");
 			    			wizMap.remove(plr.getName());
 			        	}
@@ -280,7 +280,7 @@ public class GoldeconShop {
 	          String line0 = s.getLine(0);
 	          String line1 = s.getLine(1);
 
-	          if(line0.equalsIgnoreCase("[shop") && (line1.equalsIgnoreCase(plr.getName()) || Goldecon.checkPerm(plr, "goldecon.shop.admin")))
+	          if(line0.equalsIgnoreCase("[shop]") && (line1.equalsIgnoreCase(plr.getName()) || Goldecon.checkPerm(plr, "goldecon.shop.admin")))
 	          {
                   plr.sendMessage(edition + ChatColor.GRAY + "You have closed this shop.");
 	        	  block.setType(Material.AIR);

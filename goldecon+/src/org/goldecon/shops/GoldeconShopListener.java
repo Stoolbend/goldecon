@@ -64,12 +64,10 @@ public class GoldeconShopListener implements Listener
 	    if ((block.getTypeId() == 63) || (block.getTypeId() == 68))
 	    {
 	      Sign s = (Sign)block.getState();
-	      String line0 = s.getLine(0);
-	      String line1 = s.getLine(1);
 
-	      if (line0.equalsIgnoreCase("[shop]"))
+	      if (s.getLine(0).equalsIgnoreCase("[shop]"))
 	      {
-	        if (!plr.getName().equalsIgnoreCase(line1))
+	        if (!s.getLine(1).equalsIgnoreCase(plr.getName()))
 	        {
 	          event.setCancelled(true);
 	          plr.sendMessage(edition + ChatColor.RED + "You can not break someone else's shop.");
@@ -108,7 +106,7 @@ public class GoldeconShopListener implements Listener
 	      String line2 = s.getLine(2);
 	      String line3 = s.getLine(3);
 	      
-	      if (line0.equalsIgnoreCase("[shop]")) {
+	     if (line0.equalsIgnoreCase("[shop]")) {
 	        String input = line3;
 	        String[] output = input.split(":");
 	        String bprice = output[0];
