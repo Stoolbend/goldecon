@@ -2,9 +2,9 @@
 
 Current compatibility status: CraftBukkit 1.2.4-R0.1 & Below
 
-Last tested on: CraftBukkit 1.2.4-R0.1
+Last compiled/tested on: CraftBukkit 1.2.4-R0.1
 
-Currently in development on: Bukkit 1.2.4-R0.1
+Version currently in development: goldecon+ 1.6.1 - Bugfixes for 1.6
 
 ## A little intro
 goldecon+ (plus) is a version of boardinggamer's & Kierrow's "goldecon" plugin with
@@ -21,38 +21,42 @@ as individual plugin files) which are listed below.
 
 * GoldeconRegionMarket - Sign based method of selling worldguard regions
 
-* (Coming in 1.6) GoldeconAPI - Allows you to hook into goldecon's functions from other plugins.
+* (Coming soon!) GoldeconAPI - Allows you to hook into goldecon's functions from other plugins.
 
-* (Coming in 1.6) Goldecon Vault Connector - Allows plugins that use the Vault API to use Goldecon!
+* (Coming soon! Register your interest on BukkitDev) Goldecon Vault Connector - Allows plugins that use the Vault API to use Goldecon!
 
 ## Permissions
  * goldecon.core.use
 
-Lets a player use the /ge commands.
+Lets a player use the /ge commands. (Default: True)
 
  * goldecon.shop.use
 
-(Not used just yet) Allows usage of shops.
+(Not used just yet) Allows usage of shops. (Default: True)
 
  * goldecon.shop.create
 
-Lets a player create a shop sign using /geshop.
+Lets a player create a shop sign using /geshop. (Default: OP)
 
  * goldecon.bank.use
 
-Lets a player use all the /gebank commands & functions.
+Lets a player use all the /gebank commands & functions. (Default: False)
 
  * goldecon.bank.admin
 
-Lets a player use special /gebank commands.
+Lets a player use special /gebank commands. (Default: False)
+
+ * goldecon.region.use
+
+Lets a player buy a region using a sign. (Default: True)
 
  * goldecon.region.sell
 
-Lets a player sell a region using /geregion.
+Lets a player sell a region using /geregion. (Default: OP)
 
  * goldecon.region.admin
 
-Lets a player sell any region using /geregion.
+Lets a player sell any region using /geregion. (Default: OP)
 
 What permission plugins can you use? Well goldecon+ and goldecon-lite Currently support...
 

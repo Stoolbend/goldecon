@@ -1,6 +1,6 @@
 package org.goldecon.shops;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,7 +23,7 @@ public class GoldeconShopListener implements Listener
 	boolean debug = false;
 	Goldecon plugin;
 	String edition = Goldecon.edition;
-	HashMap<String, Integer> wizMap = GoldeconShop.wizMap;
+	Map<String, Integer> wizMap = GoldeconShop.wizMap;
   
 	public GoldeconShopListener(Goldecon goldecon)
 	{
@@ -47,8 +47,9 @@ public class GoldeconShopListener implements Listener
 				stage = wizMap.get(player.getName());
 				if(stage>=0)
 				{
-					GoldeconShop.shopWizard(player, stage, e.getMessage());
+					String tempmsg = e.getMessage();
 					e.setCancelled(true);
+					GoldeconShop.shopWizard(player, stage, tempmsg);
 				}
 			}
 		}
@@ -85,10 +86,13 @@ public class GoldeconShopListener implements Listener
 	@EventHandler
 	public void shopSignChange(SignChangeEvent event)
 	{
-	  if (event.getLine(0).equalsIgnoreCase("[shop]")) {
-	    event.setCancelled(true);
-	    event.getPlayer().sendMessage(edition + ChatColor.RED + "You cant create a shop that way.");
+	  if (event.getLine(0).equalsIgnoreCase("[newshop]")) {
+	    event.getPlayer().sendMessage(edition + ChatColor.DARK_PURPLE + "Now run /geshop create to make it a working shop!");
 	  }
+	  if (event.getLine(0).equalsIgnoreCase("[shop]")) {
+		    event.getPlayer().sendMessage(edition + ChatColor.RED + "You dont make a shop this way. Make a sign with [newshop] on the top line.");
+		    event.setCancelled(true);
+		  }
 	}
 	
 	@EventHandler
@@ -179,6 +183,10 @@ public class GoldeconShopListener implements Listener
                  plr.sendMessage(edition + ChatColor.RED + "This shop isnt working at the moment. Try re-making the shop using /geshop");
                  return;
          	}
+         	if(price == 0){
+                plr.sendMessage(edition + ChatColor.RED + "This shop isn't buying items from players.");
+                return;
+        	}
            if (plr.getInventory().contains(item, itemamount)) {
              if (chest.getInventory().contains(Material.GOLD_NUGGET, price)) {
                plr.getInventory().removeItem(new ItemStack[] { new ItemStack(item, itemamount) });

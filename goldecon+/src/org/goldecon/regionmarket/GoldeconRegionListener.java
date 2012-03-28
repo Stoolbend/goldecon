@@ -80,12 +80,19 @@ public class GoldeconRegionListener implements Listener
 	 		// Check if WG is hooked in
 	 		if(!(Goldecon.wgHook == 1)){
 	       	  	plr.sendMessage(edition + ChatColor.RED + "You can't use RegionMarkets becasue WorldGuard isn't on the server!");
+	       	  	event.setCancelled(true);
 	       	  	return;
 	 		}
-	     event.setCancelled(true);
+
+	           if(!Goldecon.checkPerm(plr, "goldecon.region.use")){
+	         	  	plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
+	         	  		return;
+	           }  
          int price = Integer.parseInt(line3.replace("Price: ", "").trim());
-         if (!creator.equalsIgnoreCase(plr.getName())) {
-           if (plr.getInventory().contains(Material.GOLD_NUGGET, price)) {
+         if (!creator.equalsIgnoreCase(plr.getName()))
+         {
+           if (plr.getInventory().contains(Material.GOLD_NUGGET, price))
+           {
         	   
         	   // take the gold from their inventory
                plr.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.GOLD_NUGGET, price) });
@@ -100,7 +107,9 @@ public class GoldeconRegionListener implements Listener
         	   
                block.setType(Material.AIR);
                
-           } else {
+           } 
+           else
+           {
              plr.sendMessage(edition + ChatColor.RED + "You do not have enough money for that.");
            }
          }

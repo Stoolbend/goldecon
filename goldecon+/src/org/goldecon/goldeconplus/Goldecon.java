@@ -256,8 +256,8 @@ public final class Goldecon extends JavaPlugin
       // GoldeconShop command method is activated here after the core stuff
       // TODO Move the /geshop command to goldecon.shops.GoldeconShop}
       // /geshop command logic start
-      else if ((cmd.getName().equalsIgnoreCase("geshop")) && (args.length < 4)){
-          if (((sender instanceof Player)) && (args.length == 0))
+      else if ((cmd.getName().equalsIgnoreCase("geshop")) && (args.length != 1)){
+          if (((sender instanceof Player)))
           {
         	  Player plr = (Player)sender;
         	  if(!checkPerm(plr, "goldecon.shop.use"))
@@ -287,7 +287,7 @@ public final class Goldecon extends JavaPlugin
         		  plr.sendMessage(edition + ChatColor.RED + "You dont have permission to do that, dave.");
         		  return true;
         	  }
-        	  GoldeconShop.shopWizard(plr, 0, "#start_from_cmd");
+        	  geShop.shopWizard(plr, 0, "start_from_cmd");
           }
       }
     // /geshop command logic end

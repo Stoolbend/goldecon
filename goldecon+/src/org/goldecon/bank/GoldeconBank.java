@@ -17,7 +17,7 @@ public class GoldeconBank {
 	public GoldeconBank(Goldecon goldecon){
 		this.plugin = goldecon;
 	}
-	
+
 	public static void playerJoin(PlayerJoinEvent e){
 		Player player = e.getPlayer();
 		if (!Goldecon.banks.contains(e.getPlayer().getName()))
