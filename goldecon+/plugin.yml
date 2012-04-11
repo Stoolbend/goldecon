@@ -1,6 +1,6 @@
 name: goldeconplus
 main: org.goldecon.goldeconplus.Goldecon
-version: 1.6.1
+version: 1.7_alpha2
 authors: [Stoolbend, boardinggamer, Kierrow]
 description: A simple economy based around gold nuggets.
 permissions:
