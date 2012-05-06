@@ -20,6 +20,7 @@ import org.goldecon.regionmarket.GoldeconRegionListener;
 import org.goldecon.regionmarket.GoldeconRegionMarket;
 import org.goldecon.shops.GoldeconShop;
 import org.goldecon.shops.GoldeconShopListener;
+import org.goldecon.updater.GoldeconUpdater;
 
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -51,6 +52,7 @@ public final class Goldecon extends JavaPlugin
   GoldeconRegionMarket geRegion;
   GoldeconBank geBank;
   GoldeconDrops geDrops;
+  GoldeconUpdater geUpdater;
   
   // WorldGuard status variable
   public static int wgHook = 0;
@@ -110,7 +112,8 @@ public final class Goldecon extends JavaPlugin
     Goldecon.log.info(Goldecon.info.getName() + " has been disabled");
   }
   
-  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+  @SuppressWarnings("static-access")
+public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
   {
     if ((sender instanceof Player)) {
       Player player = (Player)sender;

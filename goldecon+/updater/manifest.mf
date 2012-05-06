@@ -1,0 +1,11 @@
+# Goldecon+ Updater Manifest
+# (C) 2012-2013 Stoolbend <stoolbend@mc-server.co.uk>
+created: 27/04/2012
+
+# Latest stable build
+latest-stable: 1.7_alpha2
+stable-url: https://github.com/Stoolbend/goldecon/raw/3270a6d1479fe28c3f236031e6bb995bb29f176e/goldecon-plus.jar
+
+# Latest dev build
+latest-dev: 1.7_RC1
+dev-url: https://github.com/Stoolbend/goldecon/raw/3270a6d1479fe28c3f236031e6bb995bb29f176e/goldecon-plus.jar
